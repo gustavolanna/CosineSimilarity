@@ -1,3 +1,7 @@
+import domain.CosineSimilarity;
+import domain.Document;
+import repository.GenreRepository;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -7,6 +11,8 @@ import java.util.Map;
  *
  */
 public class RequestHandler {
+
+	private GenreRepository repository = new GenreRepository();
 	
 	/**
 	 * Implement for part 1
@@ -14,7 +20,7 @@ public class RequestHandler {
 	 * @return a map where the keys are the terms from the document and the value is the frequency of that term.
 	 */
 	public Map<String, Integer> getTermFrequencies(String documentText) {
-		return Collections.emptyMap(); // replace this with the correct map implementation
+		return new Document(documentText).getFrequencies();
 	}
 	
 	/**
@@ -25,7 +31,9 @@ public class RequestHandler {
 	 * @return The similarity score. The range of values will be algorithm specific.
 	 */
 	public Double getSimilarityScore(String doc1Text, String doc2Text) {
-		return 0.0;
+		Document document1 = new Document(doc1Text);
+		Document document2 = new Document(doc2Text);
+		return document1.getSimilarity(document2, new CosineSimilarity());
 	}
 	
 	/**
@@ -36,7 +44,7 @@ public class RequestHandler {
 	 * @param documentText
 	 */
 	public void addDocumentToGenre(String genre, String docId, String documentText) {
-		
+		repository.add(genre, docId, documentText);
 	}
 	
 	/**
@@ -46,7 +54,7 @@ public class RequestHandler {
 	 * @param docId document to remove
 	 */
 	public void removeDocumentFromGenre(String genre, String docId) {
-		
+		repository.remove(genre, docId);
 	}
 	
 	/**
@@ -55,7 +63,7 @@ public class RequestHandler {
 	 * @return list of document ids in a specific genre
 	 */
 	public List<String> getDocumentsInGenre(String genre) {
-		return Collections.emptyList(); // replace this with the correct list implementation
+		return repository.getDocumentsInGenre(genre);
 	}
 	
 	/**
