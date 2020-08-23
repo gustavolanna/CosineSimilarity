@@ -1,4 +1,4 @@
-package domain;
+package domain.docs;
 
 public class Document extends Text {
 

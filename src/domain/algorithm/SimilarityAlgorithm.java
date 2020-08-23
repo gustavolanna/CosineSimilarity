@@ -1,4 +1,6 @@
-package domain;
+package domain.algorithm;
+
+import domain.docs.Text;
 
 public interface SimilarityAlgorithm {
 

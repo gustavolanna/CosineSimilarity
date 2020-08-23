@@ -1,6 +1,6 @@
 package repository;
 
-import domain.Genre;
+import domain.docs.Genre;
 
 import java.util.List;
 import java.util.Set;

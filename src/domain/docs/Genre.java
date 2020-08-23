@@ -1,4 +1,4 @@
-package domain;
+package domain.docs;
 
 import java.util.List;
 import java.util.Map;

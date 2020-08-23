@@ -1,4 +1,6 @@
-package domain;
+package domain.algorithm;
+
+import domain.docs.Text;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,7 +18,7 @@ public class CosineSimilarity implements SimilarityAlgorithm {
         final double dotProduct = dot(leftVector, rightVector, intersection);
 
         double d1 = 0.0d;
-            for (final Integer value : leftVector.values()) {
+        for (final Integer value : leftVector.values()) {
             d1 += Math.pow(value, 2);
         }
         double d2 = 0.0d;

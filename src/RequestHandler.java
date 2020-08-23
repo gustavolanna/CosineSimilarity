@@ -1,7 +1,7 @@
-import domain.CosineSimilarity;
-import domain.CosineSorter;
-import domain.Document;
-import domain.SimilarityAlgorithm;
+import domain.algorithm.CosineSimilarity;
+import domain.algorithm.CosineSorter;
+import domain.docs.Document;
+import domain.algorithm.SimilarityAlgorithm;
 import repository.GenreRepository;
 import repository.InMemoryGenreRepository;
 

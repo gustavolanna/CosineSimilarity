@@ -1,4 +1,7 @@
-package domain;
+package domain.algorithm;
+
+import domain.docs.Document;
+import domain.docs.Genre;
 
 import java.util.Comparator;
 

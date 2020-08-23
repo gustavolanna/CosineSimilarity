@@ -1,5 +1,8 @@
-package domain;
+package domain.algorithm;
 
+import domain.algorithm.CosineSimilarity;
+import domain.docs.Document;
+import domain.docs.Genre;
 import org.junit.Test;
 
 import java.util.Map;
