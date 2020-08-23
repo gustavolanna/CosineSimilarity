@@ -5,15 +5,17 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-public class Genre {
+public class Genre extends Text {
 
     private String genre;
 
-    private Map<String, Document> documents;
+    private Map<String, Document> documents = new ConcurrentHashMap<>();
 
     public Genre(String genre) {
+        if (genre == null) {
+            throw new IllegalArgumentException("Gerne title is required");
+        }
         this.genre = genre;
-        this.documents = new ConcurrentHashMap<>();
     }
 
     public String getGenre() {
@@ -33,5 +35,17 @@ public class Genre {
                 .stream()
                 .map(doc -> doc.getText())
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public String getText() {
+        StringBuilder buffer = new StringBuilder();
+        documents.values()
+            .stream()
+            .forEach(doc -> {
+                buffer.append(doc.getText());
+                buffer.append(" ");
+            });
+        return buffer.toString();
     }
 }

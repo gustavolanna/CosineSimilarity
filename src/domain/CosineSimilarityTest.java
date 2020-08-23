@@ -5,14 +5,21 @@ import org.junit.Test;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-public class DocumentTest {
+public class CosineSimilarityTest {
 
     private final String en36197495 = "Tu Mera 22 Main Tera 22\tThe story unfolds in Melbourne, Australia with two spoilt rich brothers and best friends Robby (Amrinder Gill), Rolly (Honey Singh). Their businessman father is worried about the future of his irresponsible sons so he strikes a deal with them, by throwing the brats out of his house sending them to Punjab so that they can understand the realities of life and importance of their roots and heritage. The film is about how these two spoilt brothers arrive in Punjab and learn to live with the struggle, whilst being challenged by their father to come up with Rs.30 lakhs in 30 days in order to inherit his wealth.Otherwise the wealth would be transferred to charity which would be maintained by their father's secretary.\ten";
 
+    private final String en36217342 = "The Georgia Peaches\tTwo sisters running an auto repair shop are extorted into becoming undercover FBI agents.\ten";
+
+    private CosineSimilarity algorithm = new CosineSimilarity();
+
+    private static final double DELTA = 0.00000000000000001d;
+
     @Test
     public void shouldReturnTheCorrectFrequencies() {
-        Map<String, Integer> frequencies = new Document(en36197495).getFrequencies();
+        Map<String, Integer> frequencies = algorithm.getFrequencies(new Document(en36197495));
         assertEquals(frequencies.get("transferred"), new Integer(1));
         assertEquals(frequencies.get("brothers"), new Integer(2));
         assertEquals(frequencies.get("wealthotherwise"), new Integer(1));
@@ -97,5 +104,27 @@ public class DocumentTest {
         assertEquals(frequencies.get("story"), new Integer(1));
     }
 
+    @Test
+    public void shouldBeSimilarToItself() {
+        Document document = new Document(en36197495);
+        Document sameDocument = new Document(en36197495);
+        assertEquals(algorithm.calcSimilarity(document, sameDocument), 1, DELTA);
+    }
+
+    @Test
+    public void shouldCompareGenreToDocument() {
+        Genre genre = new Genre("Drama");
+        genre.add("doc1", en36197495);
+        genre.add("doc2", en36217342);
+        Document document = new Document(en36197495);
+        assertTrue(algorithm.calcSimilarity(document, genre) > 0.9);
+    }
+
+    @Test
+    public void shouldNotBeSimilar() {
+        Document document1 = new Document("this is a document");
+        Document document2 = new Document(en36217342);
+        assertTrue(algorithm.calcSimilarity(document1, document2) == 0.0);
+    }
 
 }

@@ -1,15 +1,14 @@
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
+import exception.ObjectNotFoundException;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.servlet.ServletHandler;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.servlet.ServletHandler;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Program entry point. Starts up and runs the servlet. Defines the servlet 
@@ -82,41 +81,43 @@ public class Main
                                                             IOException
         {
             try {
-                response.setContentType("application/json");
-                response.setStatus(HttpServletResponse.SC_OK);
-                
-                if (request.getPathInfo().equals("/termFrequencies")) {
-                		String docText = request.getParameter("documentText");
-                		Map<String, Integer> termFrequencies = requestHandler.getTermFrequencies(docText);
-                		String responseBody = intMapToJson(termFrequencies);
-                		response.getWriter().println(responseBody);
-                } else if (request.getPathInfo().equals("/similarityScore")) {
-                		String doc1Text = request.getParameter("documentText1");
-                		String doc2Text = request.getParameter("documentText2");
-                		Double similarityScore = requestHandler.getSimilarityScore(doc1Text, doc2Text);
-                		response.getWriter().println(similarityScore.toString());
-                } else if (request.getPathInfo().equals("/genreDocuments")) {
-                		String genre = request.getParameter("genre");
-                		List<String> docIds = requestHandler.getDocumentsInGenre(genre);
-                		String responseBody = stringListToJson(docIds);
-                		response.getWriter().println(responseBody);
-                } else if (request.getPathInfo().equals("/nClosestGenres")) {
-                		String documentText = request.getParameter("documentText");
-                		String count = request.getParameter("count");
-                		
-            			List<String> genres = requestHandler.getNClosestGenres(documentText, Integer.parseInt(count));
-            			String responseBody = stringListToJson(genres);
-            			response.getWriter().println(responseBody);                		
-                } else {
-            			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                }
+				response.setContentType("application/json");
+				response.setStatus(HttpServletResponse.SC_OK);
+
+				if (request.getPathInfo().equals("/termFrequencies")) {
+					String docText = request.getParameter("documentText");
+					Map<String, Integer> termFrequencies = requestHandler.getTermFrequencies(docText);
+					String responseBody = intMapToJson(termFrequencies);
+					response.getWriter().println(responseBody);
+				} else if (request.getPathInfo().equals("/similarityScore")) {
+					String doc1Text = request.getParameter("documentText1");
+					String doc2Text = request.getParameter("documentText2");
+					Double similarityScore = requestHandler.getSimilarityScore(doc1Text, doc2Text);
+					response.getWriter().println(similarityScore.toString());
+				} else if (request.getPathInfo().equals("/genreDocuments")) {
+					String genre = request.getParameter("genre");
+					List<String> docIds = requestHandler.getDocumentsInGenre(genre);
+					String responseBody = stringListToJson(docIds);
+					response.getWriter().println(responseBody);
+				} else if (request.getPathInfo().equals("/nClosestGenres")) {
+					String documentText = request.getParameter("documentText");
+					String count = request.getParameter("count");
+					List<String> genres = requestHandler.getNClosestGenres(documentText, Integer.parseInt(count));
+					String responseBody = stringListToJson(genres);
+					response.getWriter().println(responseBody);
+				} else {
+					response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+				}
+
+			} catch (IllegalArgumentException e) {
+            	handleException(response, e, HttpServletResponse.SC_BAD_REQUEST);
+			} catch (ObjectNotFoundException e) {
+				handleException(response, e, HttpServletResponse.SC_NOT_FOUND);
             } catch (Exception e) {
-                response.setContentType("text/plain");
-                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                response.getWriter().println(e.toString());
+				handleException(response, e, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
         }
-        
+
 		/**
 		 * Handle http put. Dispatch the handling of requests for the supported rest end points
 		 */
@@ -136,11 +137,11 @@ public class Main
         			} else {
                 		response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         			}
-            } catch (Exception e) {
-                response.setContentType("text/plain");
-                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                response.getWriter().println(e.toString());
-            }
+			} catch (IllegalArgumentException e) {
+				handleException(response, e, HttpServletResponse.SC_BAD_REQUEST);
+			} catch (Exception e) {
+				handleException(response, e, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			}
         }
 
         
@@ -162,13 +163,21 @@ public class Main
         			} else {
                 		response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         			}
-        		} catch (Exception e) {
-        			response.setContentType("text/plain");
-        			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        			response.getWriter().println(e.toString());
-        		}        			
+				} catch (IllegalArgumentException e) {
+					handleException(response, e, HttpServletResponse.SC_BAD_REQUEST);
+				} catch (ObjectNotFoundException e) {
+					handleException(response, e, HttpServletResponse.SC_NOT_FOUND);
+				} catch (Exception e) {
+					handleException(response, e, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				}
         }
-        
+
+		private void handleException(HttpServletResponse response, Exception exception, int httpStatus) throws IOException {
+			response.setContentType("text/plain");
+			response.setStatus(httpStatus);
+			response.getWriter().println(exception.getMessage());
+		}
+
         /**
          * Serialize a Map<String,Integer> to json:
          * '{key1:value1, key2:value2, ...}'

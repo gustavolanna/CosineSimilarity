@@ -1,10 +1,13 @@
 import domain.CosineSimilarity;
+import domain.CosineSorter;
 import domain.Document;
+import domain.SimilarityAlgorithm;
 import repository.GenreRepository;
+import repository.InMemoryGenreRepository;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Handler for operations related to calculating similarity scores
@@ -12,7 +15,9 @@ import java.util.Map;
  */
 public class RequestHandler {
 
-	private GenreRepository repository = new GenreRepository();
+	private GenreRepository repository = new InMemoryGenreRepository();
+
+	private SimilarityAlgorithm algorithm = new CosineSimilarity();
 	
 	/**
 	 * Implement for part 1
@@ -20,7 +25,7 @@ public class RequestHandler {
 	 * @return a map where the keys are the terms from the document and the value is the frequency of that term.
 	 */
 	public Map<String, Integer> getTermFrequencies(String documentText) {
-		return new Document(documentText).getFrequencies();
+		return ((CosineSimilarity)algorithm).getFrequencies(new Document(documentText));
 	}
 	
 	/**
@@ -31,9 +36,7 @@ public class RequestHandler {
 	 * @return The similarity score. The range of values will be algorithm specific.
 	 */
 	public Double getSimilarityScore(String doc1Text, String doc2Text) {
-		Document document1 = new Document(doc1Text);
-		Document document2 = new Document(doc2Text);
-		return document1.getSimilarity(document2, new CosineSimilarity());
+		return algorithm.calcSimilarity(new Document(doc1Text), new Document(doc2Text));
 	}
 	
 	/**
@@ -74,7 +77,27 @@ public class RequestHandler {
 	 * @return list of the closest Genres sorted from most similar genre to least similar
 	 */
 	public List<String> getNClosestGenres(String documentText, Integer n) {
-		return Collections.emptyList(); // replace this with the correct list implementation
+		checkNClosesArguments(documentText, n);
+		Document document = new Document(documentText);
+		return repository.getGenres()
+				.stream()
+				.sorted(new CosineSorter(documentText, algorithm))
+				.limit(n)
+				.filter(genre -> algorithm.calcSimilarity(genre, document) > 0)
+				.map(genre -> genre.getGenre())
+				.collect(Collectors.toList());
+	}
+
+	private void checkNClosesArguments(String documentText, Integer n) {
+		if (documentText == null) {
+			throw new IllegalArgumentException("A document is required");
+		}
+		if (n == null) {
+			throw new IllegalArgumentException("Count is required");
+		}
+		if (n <= 0) {
+			throw new IllegalArgumentException("A positive count is required");
+		}
 	}
 
 }
