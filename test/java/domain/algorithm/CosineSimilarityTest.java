@@ -120,7 +120,7 @@ public class CosineSimilarityTest {
         genre.add("doc1", en36197495);
         genre.add("doc2", en36217342);
         Document document = new Document(en36197495);
-        assertTrue(algorithm.calcSimilarity(document, genre) > 0.9);
+        assertTrue(algorithm.calcSimilarity(document, genre) == 0.9724646437009723d);
     }
 
     @Test
