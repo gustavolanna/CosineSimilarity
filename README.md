@@ -1,6 +1,6 @@
 <h3>Cosine Similarity - Solution</h3>
 
-<h4>Project changes<h4>
+<h4>Project changes</h4>
 
 Changes on the provided source code:
 
