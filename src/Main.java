@@ -1,4 +1,6 @@
 import exception.ObjectNotFoundException;
+import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletHandler;
 
@@ -7,8 +9,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 /**
  * Program entry point. Starts up and runs the servlet. Defines the servlet 
@@ -26,11 +30,25 @@ public class Main
 	 */
     public static void main( String[] args ) throws Exception
     {
+
+		System.setProperty("org.eclipse.jetty.util.log.class", "org.eclipse.jetty.util.log.StdErrLog");
+		System.setProperty("org.eclipse.jetty.LEVEL", "INFO");
+
+
         // Create a basic jetty server object that will listen on port 8080.
         Server server = new Server(8080);
         ServletHandler handler = new ServletHandler();
         server.setHandler(handler);
         handler.addServletWithMapping(SimCalcServlet.class, "/*");
+
+		Stream<Connector> connectors = Stream.of(server.getConnectors());
+		connectors.map(Connector::getConnectionFactories)
+				.flatMap(Collection::stream)
+				.filter(factory -> factory.getClass().isAssignableFrom(HttpConnectionFactory.class))
+				.map(factory -> ((HttpConnectionFactory) factory).getHttpConfiguration()).forEach(t -> {
+					t.setRequestHeaderSize(1024 * 1024);
+				});
+
         server.start();
 
         // The use of server.join() the will make the current thread join and
