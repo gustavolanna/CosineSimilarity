@@ -29,5 +29,7 @@ Most important domain classes
 
 The amount of memory required to load 100 Genres with 10000 documents each is 4G. The CPU usage and the garbage collector are pretty consistent according to the graphs bellow
 
+![Resources usage](images/resources.png)
+![Requests performance](images/requests.png)
 
 Please refer to this Gatling project to get more details about the tests https://github.com/gustavolanna/CosinePerformanceTest
