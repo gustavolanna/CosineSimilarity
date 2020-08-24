@@ -17,7 +17,7 @@ The following packages were added to the project
 /exception
 ```
 
-Design
+<h4>Design</h4>
 
 Most important domain classes
 
@@ -25,7 +25,7 @@ Most important domain classes
    - Document: class to represent a document
    - Text: base class for Document and Genre, so the Cosine Similarity algorithm will be able to calculate the similarity between two Documents or the similarity between a Document and a Genre.
 
-Performance
+<h4>Performance</h4>
 
 The amount of memory required to load 100 Genres with 10000 documents each is 4G. The CPU usage and the garbage collector are pretty consistent according to the graphs bellow
 
