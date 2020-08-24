@@ -47,6 +47,15 @@ public class RequestHandler {
 	 * @param documentText
 	 */
 	public void addDocumentToGenre(String genre, String docId, String documentText) {
+		if (genre == null) {
+			throw new IllegalArgumentException("A genre is required");
+		}
+		if (docId == null) {
+			throw new IllegalArgumentException("A document id is required");
+		}
+		if (documentText == null) {
+			throw new IllegalArgumentException("A document text is required");
+		}
 		repository.add(genre, docId, documentText);
 	}
 	
@@ -57,6 +66,12 @@ public class RequestHandler {
 	 * @param docId document to remove
 	 */
 	public void removeDocumentFromGenre(String genre, String docId) {
+		if (genre == null) {
+			throw new IllegalArgumentException("A genre is required");
+		}
+		if (docId == null) {
+			throw new IllegalArgumentException("A document id is required");
+		}
 		repository.remove(genre, docId);
 	}
 	

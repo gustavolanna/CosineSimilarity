@@ -3,6 +3,7 @@ package repository;
 import domain.docs.Genre;
 import exception.ObjectNotFoundException;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -31,6 +32,9 @@ public class InMemoryGenreRepository implements GenreRepository {
     }
 
     public List<String> getDocumentsInGenre(String genreTitle) {
+        if (genreTitle == null) {
+            return Collections.emptyList();
+        }
         Genre genre = repository.get(genreTitle);
         if (genre != null) {
             return genre.getDocuments();
